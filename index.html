@@ -1,56 +1,158 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>配速计算器</title>
+    <title>现代化配速计算器</title>
+    <script src="https://image.uc.cn/s/uae/g/3n/mos-production/0915/3.4.17.js"></script>
     <style>
-        body { font-family: sans-serif; padding: 20px; text-align: center; }
-        input { width: 80%; padding: 10px; margin: 10px 0; font-size: 16px; }
-        button { padding: 10px 20px; background: #007bff; color: white; border: none; border-radius: 5px; font-size: 18px; }
-        #result { margin-top: 20px; font-size: 24px; font-weight: bold; color: #333; }
+        /* 自定义样式 */
+        .input-field {
+            transition: all 0.2s ease;
+        }
+        .input-field:focus {
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5);
+        }
+        .highlight {
+            border-color: #3b82f6;
+        }
+        @media (max-width: 480px) {
+            .time-input-group .input-wrapper {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.25rem;
+            }
+            .time-input-group .input-wrapper > span {
+                display: none;
+            }
+        }
     </style>
+<script>
+!(function(j,a,g){j.__itrace_conf = {bid: 'kt40h0wl-koyh4af8',rel: '', uid: '874a891e-3069-4b96-97d7-7f2e85c6ce4c' ,  spa: true, plugins:['jserror','interface','perf','resource','flow','blank']};var b = a.createElement("script");var d = a.getElementsByTagName("script")[0];b.type = "text/javascript";b.crossorigin = true;b.async = true;b.onload = function(){j.__itrace && j.__itrace.setReady()};d.parentNode.insertBefore(b,d);b.src = g})(window, document, "https://g.alicdn.com/woodpeckerx/itrace-next/itrace.iife.js")
+</script>
 </head>
-<body>
-
-    <h2>🏃 配速计算器</h2>
-    
-    <input type="number" id="dist" placeholder="距离 (公里, e.g. 5)">
-    <div style="display:flex; gap:10px; justify-content:center;">
-        <input type="number" id="mins" placeholder="分钟 (e.g. 25)">
-        <input type="number" id="secs" placeholder="秒 (e.g. 0)">
+<body class="bg-gray-50 min-h-screen p-4 md:p-8">
+    <div class="max-w-2xl mx-auto bg-white rounded-xl shadow-md overflow-hidden">
+        <div class="p-6 md:p-8">
+            <h1 class="text-2xl md:text-3xl font-bold text-gray-800 mb-6">配速计算器</h1>
+            
+            <div class="space-y-6">
+                <!-- 时间输入区域 -->
+                <div class="time-input-group">
+                    <label for="time-hour" class="block text-sm font-medium text-gray-700 mb-2">时间 (HH:MM:SS)</label>
+                    <div class="input-wrapper flex items-center gap-2">
+                        <input type="number" id="time-hour" class="input-field w-16 md:w-20 h-12 px-3 border border-gray-300 rounded-lg focus:border-blue-500" 
+                               placeholder="00" min="0" max="23" aria-label="小时">
+                        <span class="text-gray-500">:</span>
+                        <input type="number" id="time-minute" class="input-field w-16 md:w-20 h-12 px-3 border border-gray-300 rounded-lg focus:border-blue-500" 
+                               placeholder="00" min="0" max="59" aria-label="分钟">
+                        <span class="text-gray-500">:</span>
+                        <input type="number" id="time-second" class="input-field w-16 md:w-20 h-12 px-3 border border-gray-300 rounded-lg focus:border-blue-500" 
+                               placeholder="00" min="0" max="59" aria-label="秒">
+                    </div>
+                </div>
+                
+                <!-- 距离输入区域 -->
+                <div class="distance-input-group">
+                    <label for="distance" class="block text-sm font-medium text-gray-700 mb-2">距离</label>
+                    <div class="input-wrapper flex items-center gap-2">
+                        <input type="number" id="distance" class="input-field flex-1 h-12 px-3 border border-gray-300 rounded-lg focus:border-blue-500" 
+                               placeholder="例如：10" step="0.1" min="0.1" value="10" aria-label="距离">
+                        <span class="text-gray-600 font-medium whitespace-nowrap">公里</span>
+                    </div>
+                </div>
+                
+                <!-- 计算按钮 -->
+                <div class="pt-2">
+                    <button id="calculate-btn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-lg transition duration-200">
+                        计算配速
+                    </button>
+                </div>
+                
+                <!-- 结果展示 -->
+                <div id="result" class="hidden mt-6 p-4 bg-blue-50 rounded-lg">
+                    <h3 class="text-lg font-medium text-gray-800 mb-2">计算结果</h3>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <p class="text-sm text-gray-600">配速</p>
+                            <p id="pace-result" class="text-xl font-semibold text-blue-600">--:--</p>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-600">速度</p>
+                            <p id="speed-result" class="text-xl font-semibold text-blue-600">-- km/h</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <footer class="bg-gray-100 px-6 py-4 text-center text-sm text-gray-500">
+            本内容由AI生成，可能存在错误或不准确之处。请在使用前自行核实信息的准确性。
+        </footer>
     </div>
 
-    <button onclick="calcPace()">计算配速</button>
-
-    <div id="result"></div>
-
     <script>
-        function calcPace() {
-            let d = parseFloat(document.getElementById('dist').value);
-            let m = parseFloat(document.getElementById('mins').value) || 0;
-            let s = parseFloat(document.getElementById('secs').value) || 0;
-
-            if (!d || d <= 0) {
-                document.getElementById('result').innerText = "请输入有效距离";
+        // 获取DOM元素
+        const hourInput = document.getElementById('time-hour');
+        const minuteInput = document.getElementById('time-minute');
+        const secondInput = document.getElementById('time-second');
+        const distanceInput = document.getElementById('distance');
+        const calculateBtn = document.getElementById('calculate-btn');
+        const paceResult = document.getElementById('pace-result');
+        const speedResult = document.getElementById('speed-result');
+        const resultContainer = document.getElementById('result');
+        
+        // 输入框高亮效果
+        [hourInput, minuteInput, secondInput, distanceInput].forEach(input => {
+            input.addEventListener('input', function() {
+                this.classList.add('highlight');
+                setTimeout(() => this.classList.remove('highlight'), 500);
+            });
+        });
+        
+        // 计算配速
+        calculateBtn.addEventListener('click', calculatePace);
+        
+        function calculatePace() {
+            // 获取时间值
+            const hour = parseInt(hourInput.value) || 0;
+            const minute = parseInt(minuteInput.value) || 0;
+            const second = parseInt(secondInput.value) || 0;
+            const distance = parseFloat(distanceInput.value) || 0.1;
+            
+            // 验证输入
+            if (hour > 23 || minute > 59 || second > 59) {
+                alert('时间格式不正确，请输入有效的时间值');
                 return;
             }
-
-            // 1. 全部转为秒
-            let totalSeconds = (m * 60) + s;
-
-            // 2. 算出每公里多少秒
-            let paceSeconds = totalSeconds / d;
-
-            // 3. 换算回 分:秒
-            let paceM = Math.floor(paceSeconds / 60);
-            let paceS = Math.round(paceSeconds % 60);
-
-            // 补零美化 (比如 5:2 -> 5:02)
-            let paceSStr = paceS < 10 ? "0" + paceS : paceS;
-
-            document.getElementById('result').innerText = `配速: ${paceM}:${paceSStr} /km`;
+            
+            if (distance <= 0) {
+                alert('距离必须大于0');
+                return;
+            }
+            
+            // 计算总秒数
+            const totalSeconds = hour * 3600 + minute * 60 + second;
+            
+            // 计算配速（每公里所需秒数）
+            const paceSeconds = totalSeconds / distance;
+            const paceMin = Math.floor(paceSeconds / 60);
+            const paceSec = Math.round(paceSeconds % 60);
+            const formattedPace = `${paceMin.toString().padStart(2, '0')}:${paceSec.toString().padStart(2, '0')}`;
+            
+            // 计算速度（公里/小时）
+            const speed = distance / (totalSeconds / 3600);
+            const formattedSpeed = speed.toFixed(2);
+            
+            // 显示结果
+            paceResult.textContent = formattedPace;
+            speedResult.textContent = `${formattedSpeed} km/h`;
+            resultContainer.classList.remove('hidden');
         }
+        
+        // 初始计算
+        calculatePace();
     </script>
 </body>
 </html>
