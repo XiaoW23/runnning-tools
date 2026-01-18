@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>配速计算器</title>
+    <style>
+        body { font-family: sans-serif; padding: 20px; text-align: center; }
+        input { width: 80%; padding: 10px; margin: 10px 0; font-size: 16px; }
+        button { padding: 10px 20px; background: #007bff; color: white; border: none; border-radius: 5px; font-size: 18px; }
+        #result { margin-top: 20px; font-size: 24px; font-weight: bold; color: #333; }
+    </style>
+</head>
+<body>
+
+    <h2>🏃 配速计算器</h2>
+    
+    <input type="number" id="dist" placeholder="距离 (公里, e.g. 5)">
+    <div style="display:flex; gap:10px; justify-content:center;">
+        <input type="number" id="mins" placeholder="分钟 (e.g. 25)">
+        <input type="number" id="secs" placeholder="秒 (e.g. 0)">
+    </div>
+
+    <button onclick="calcPace()">计算配速</button>
+
+    <div id="result"></div>
+
+    <script>
+        function calcPace() {
+            let d = parseFloat(document.getElementById('dist').value);
+            let m = parseFloat(document.getElementById('mins').value) || 0;
+            let s = parseFloat(document.getElementById('secs').value) || 0;
+
+            if (!d || d <= 0) {
+                document.getElementById('result').innerText = "请输入有效距离";
+                return;
+            }
+
+            // 1. 全部转为秒
+            let totalSeconds = (m * 60) + s;
+
+            // 2. 算出每公里多少秒
+            let paceSeconds = totalSeconds / d;
+
+            // 3. 换算回 分:秒
+            let paceM = Math.floor(paceSeconds / 60);
+            let paceS = Math.round(paceSeconds % 60);
+
+            // 补零美化 (比如 5:2 -> 5:02)
+            let paceSStr = paceS < 10 ? "0" + paceS : paceS;
+
+            document.getElementById('result').innerText = `配速: ${paceM}:${paceSStr} /km`;
+        }
+    </script>
+</body>
+</html>
